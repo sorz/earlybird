@@ -3,6 +3,8 @@ from socket import socket, AF_INET, SOCK_DGRAM, SO_BINDTODEVICE, SOL_SOCKET
 from struct import pack, unpack
 from hashlib import blake2b
 from hmac import compare_digest
+from statistics import mean, stdev
+from collections import namedtuple
 import logging
 import time
 
@@ -14,6 +16,8 @@ TIMEOUT = 3
 PKT_MAC_LEN = 16
 PKT_TYP_PING = 0
 PKT_TYP_STAT = 1
+
+TestResult = namedtuple('TestResult', ['loss', 'avg', 'max', 'min', 'stdev'])
 
 def _digest(pkt):
     mac = blake2b(key=PSK, digest_size=PKT_MAC_LEN)
@@ -48,12 +52,29 @@ class PingHost:
         return pkt
 
     def ping(self):
+        """Send a ping to remote, return without waiting."""
         t = int(time.time() * 1000)
         pkt = pack('!BQ', PKT_TYP_PING, t)
         self._send(pkt)
         self._pings.add(t % 2**32)
 
+    def perform_test(self, n=5, interval=0.1):
+        """Perform `n`-times pings and return (loss %, avg, max, min,
+        stdev) in msec.
+        """
+        for _ in range(n):
+            self.ping()
+            time.sleep(interval)
+        time.sleep(interval)
+        n_sent, ts = self.stat()
+        loss = (len(ts) - n_sent) / n_sent
+        return TestResult(loss, mean(ts), max(ts), min(ts), stdev(ts))
+
     def stat(self):
+        """Request statistics from remote. Return (n, [t1, .., tm]),
+        where n is number of pings sent, t is delay in msec, m <= n.
+        May raise IOError if remote don't response.
+        """
         t = int(time.time() * 1000)
         request = pack('!BQ', PKT_TYP_STAT, t)
         pkt = None
@@ -95,17 +116,7 @@ class PingHost:
 def main():
     logging.basicConfig(level=logging.DEBUG)
     with PingHost(('192.168.6.65', 3322), 'tun-rpi') as ping:
-        ping.ping()
-        time.sleep(0.01)
-        ping.ping()
-        time.sleep(0.01)
-        ping.ping()
-        time.sleep(0.01)
-        ping.ping()
-        time.sleep(0.01)
-        ping.ping()
-        time.sleep(0.1)
-        print(ping.stat())
+        print(ping.perform_test(10, 0.01))
 
 
 if __name__ == '__main__':
