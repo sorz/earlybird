@@ -8,11 +8,10 @@ setup(
     author='Shell Chen',
     author_email='me@sorz.org',
     packages=['earlybird'],
-    entry_points={
-        'distutils.commands': [
-            'earlybird = earlybird:run',
-        ],
-    },
+    entry_points="""
+    [console_scripts]
+    earlybird = earlybird:run
+    """,
     install_requires=[
         'jinja2',
         'pyroute2',
