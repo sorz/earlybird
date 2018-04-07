@@ -25,8 +25,11 @@ class Bird:
     def perform_test(self):
         for ifname, (addr, port) in self._ifname_addr.items():
             if addr is None:
-                # TODO: update addr
-                continue
+                addr = get_peer_addr(ifname)
+                if addr is not None:
+                    self.add_interface(ifname, addr, port)
+                else
+                    continue
             with PingHost((addr, port), ifname) as ping:
                 try:
                     stat = ping.perform_test()
