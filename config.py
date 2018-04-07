@@ -12,5 +12,5 @@ INTERFACES = [
     'tun-rpi',
 ]
 TEMPLATE = 'bird.conf'
-TEMPLATE_SEARCH_PATHS = ['./']
+TEMPLATE_SEARCH_PATHS = ['./', './templates/']
 TEMPLATE_OUTPUT = './output.conf'
