@@ -24,7 +24,8 @@ def main():
         pingd_thread = Thread(target=pingd, daemon=True)
         pingd_thread.start()
 
-    bird = Bird(cfg.PINGD_PORT, cfg.INTERFACES, cfg.TEMPLATE_SEARCH_PATHS)
+    bird = Bird(cfg.PSK, cfg.PINGD_PORT, cfg.INTERFACES,
+            cfg.TEMPLATE_SEARCH_PATHS)
     while True:
         bird.perform_test()
         bird.generate_to(cfg.TEMPLATE, cfg.TEMPLATE_OUTPUT)

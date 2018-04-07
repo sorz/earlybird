@@ -6,7 +6,8 @@ from .pingc import PingHost
 
 
 class Bird:
-    def __init__(self, port, ifnames, template_paths=['.']):
+    def __init__(self, psk, port, ifnames, template_paths=['.']):
+        self._psk = psk
         self._ifname_addr = dict()
         self._ifname_stat = dict()
         self._jinja = Environment(
@@ -29,7 +30,7 @@ class Bird:
                     self.add_interface(ifname, addr, port)
                 else:
                     continue
-            with PingHost((addr, port), ifname) as ping:
+            with PingHost(self._psk, (addr, port), ifname) as ping:
                 try:
                     stat = ping.perform_test()
                     self._ifname_stat[ifname] = stat

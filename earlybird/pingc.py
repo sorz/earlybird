@@ -9,7 +9,6 @@ import logging
 import time
 
 
-PSK = b'tW-VPtR4Sq4M2NR-Jo8FSQ'
 MAX_DELAY_SECS = 10
 TIMEOUT = 3
 
@@ -19,24 +18,24 @@ PKT_TYP_STAT = 1
 
 TestResult = namedtuple('TestResult', ['loss', 'avg', 'max', 'min', 'stdev'])
 
-def _digest(pkt):
-    mac = blake2b(key=PSK, digest_size=PKT_MAC_LEN)
-    mac.update(pkt)
-    return mac.digest()
 
 class PingHost:
-    def __init__(self, dest, dev=None):
+    def __init__(self, psk, dest, dev=None):
         self._sock = socket(AF_INET, SOCK_DGRAM)
         self._sock.settimeout(TIMEOUT)
+        self._psk = psk
         self._dest = dest
         self._pings = set()
         if dev is not None:
             self._sock.setsockopt(SOL_SOCKET, SO_BINDTODEVICE, dev.encode())
 
-    def _send(self, pkt):
-        mac = blake2b(key=PSK, digest_size=PKT_MAC_LEN)
+    def _digest(self, pkt):
+        mac = blake2b(key=self._psk, digest_size=PKT_MAC_LEN)
         mac.update(pkt)
-        pkt += mac.digest()
+        return mac.digest()
+
+    def _send(self, pkt):
+        pkt += self._digest(pkt)
         self._sock.sendto(pkt, self._dest)
 
     def _recv(self):
@@ -44,7 +43,7 @@ class PingHost:
         if len(pkt) < PKT_MAC_LEN + 1:
             raise IOError('packet too short, ignored')
         pkt, mac = pkt[:-PKT_MAC_LEN], pkt[-PKT_MAC_LEN:]
-        if not compare_digest(_digest(pkt), mac):
+        if not compare_digest(self._digest(pkt), mac):
             raise IOError('wrong auth digest, ignored')
         t, = unpack('!Q', pkt[1:9])
         if time.time() - t / 1000 > MAX_DELAY_SECS:
@@ -115,7 +114,7 @@ class PingHost:
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    with PingHost(('192.168.6.65', 3322), 'tun-rpi') as ping:
+    with PingHost('test123', ('192.168.6.65', 3322), 'tun-rpi') as ping:
         print(ping.perform_test(10, 0.01))
 
 
