@@ -28,7 +28,7 @@ class Bird:
                 addr = get_peer_addr(ifname)
                 if addr is not None:
                     self.add_interface(ifname, addr, port)
-                else
+                else:
                     continue
             with PingHost((addr, port), ifname) as ping:
                 try:
