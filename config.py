@@ -14,3 +14,4 @@ INTERFACES = [
 TEMPLATE = 'bird.conf'
 TEMPLATE_SEARCH_PATHS = ['./', './templates/']
 TEMPLATE_OUTPUT = './output.conf'
+BIRD_RELOAD_CMD=['/usr/bin/birdc', 'configure']

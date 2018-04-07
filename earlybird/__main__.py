@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from importlib import import_module
 from threading import Thread
+import subprocess
 import logging
 import time
 import sys
@@ -26,6 +27,12 @@ def main():
     while True:
         bird.perform_test()
         bird.generate_to(cfg.TEMPLATE, cfg.TEMPLATE_OUTPUT)
+        result = subprocess.run(cfg.BIRD_RELOAD_CMD)
+        if result.returncode == 0:
+            logging.debug('bird config reloaded')
+        else:
+            logging.warning('fail to reload bird: '
+                    'process exit with %s', result.returncode)
         try:
             time.sleep(cfg.TEST_INVERVAL)
         except KeyboardInterrupt:
@@ -35,3 +42,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

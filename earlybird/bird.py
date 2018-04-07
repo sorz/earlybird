@@ -6,7 +6,6 @@ from .pingc import PingHost
 
 
 class Bird:
-    
     def __init__(self, port, ifnames, template_paths=['.']):
         self._ifname_addr = dict()
         self._ifname_stat = dict()
@@ -47,3 +46,4 @@ class Bird:
         text = self.generate(template)
         with open(output, 'w') as f:
             f.write(text)
+
