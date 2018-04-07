@@ -11,6 +11,8 @@ def main():
         print(f"Usage: {sys.argv[0]} config", file=sys.stderr)
         sys.exit(1)
     cfg = import_module(sys.argv[1])
+    logging.basicConfig(level=cfg.LOGGING_LEVEL)
+
     print(cfg.PSK)
 
 if __name__ == '__main__':
