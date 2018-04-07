@@ -16,6 +16,7 @@ def main():
     if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} config", file=sys.stderr)
         sys.exit(1)
+    sys.path.append('/etc/earlybird')
     cfg = import_module(sys.argv[1])
     logging.basicConfig(level=cfg.LOGGING_LEVEL)
     if cfg.ENABLE_PINGD:
