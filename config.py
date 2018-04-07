@@ -1,1 +1,13 @@
+import logging
+
+LOGGING_LEVEL = logging.DEBUG
 PSK = b'tW-VPtR4Sq4M2NR-Jo8FSQ'
+
+ENABLE_PINGD = True
+PINGD_LISTEN = ('0.0.0.0', 3322)
+
+TEST_INVERVAL = 600
+PINGD_PORT = PINGD_LISTEN[1]
+INTERFACES = [
+    'tun-rpi',
+]

@@ -17,14 +17,19 @@ PKT_TYP_STAT = 1
 PKT_TYP_RESP = 2
 
 class PingDaemon:
-    def __init__(self, psk):
+    def __init__(self, psk, listen=('0.0.0.0', 3322)):
         self._psk = psk
+        self._listen = listen
         self._sock = None
         self._host_ping_records = dict()
 
-    def run_forever(self, listen=('0.0.0.0', 3322)):
+    def __call__(self):
+        self.run_forever()
+
+    def run_forever(self):
         self._sock = socket(AF_INET, SOCK_DGRAM)
-        self._sock.bind(listen)
+        self._sock.bind(self._listen)
+        logging.info('pingd started on %s:%s', *self._listen)
         while True:
             pkt, addr = self._sock.recvfrom(1024)
             self._handle_pkt(pkt, addr)
