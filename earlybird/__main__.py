@@ -25,8 +25,7 @@ def main():
     bird = Bird(cfg.PINGD_PORT, cfg.INTERFACES, cfg.TEMPLATE_SEARCH_PATHS)
     while True:
         bird.perform_test()
-        #bird.generate_to(cfg.TEMPLATE, cfg.TEMPLATE_OUTPUT)
-        print(bird.generate(cfg.TEMPLATE))
+        bird.generate_to(cfg.TEMPLATE, cfg.TEMPLATE_OUTPUT)
         try:
             time.sleep(cfg.TEST_INVERVAL)
         except KeyboardInterrupt:
