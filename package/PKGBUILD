@@ -1,0 +1,31 @@
+pkgname=earlybird-git
+_pkgname=earlybird
+pkgver=r13.5bbb1ae
+pkgrel=1
+arch=('any')
+depends=('python' 'python-jinja' 'python-pyroute2')
+makedepends=('git' 'python')
+source=(git+file:///home/xierch/earlybird)
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$_pkgname"
+  ./setup.py build
+}
+
+package() {
+  cd "$_pkgname"
+  ./setup.py install --root "$pkgdir" -O2
+  _cfgdir="$pkgdir"/etc/"$_pkgname"
+  _tmpdir="$_cfgdir"/templates
+   mkdir -p "$_cfgdir" "$_cfgdir"/templates
+   install -Dm 644 config.py "$_cfgdir"/config_example.py
+   install -Dm 644 templates/interface.conf "$_tmpdir"/interface.conf
+   install -Dm 644 templates/bird.conf "$_tmpdir"/bird.example.conf
+   install -Dm 644 earlybird.service "$pkgdir/usr/lib/systemd/system/earlybird.service"
+}

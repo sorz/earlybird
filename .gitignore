@@ -1,4 +1,8 @@
 output.conf
+package/pkg/
+package/src/
+package/earlybird/
+package/*.xz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

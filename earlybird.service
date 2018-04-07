@@ -1,0 +1,19 @@
+[Unit]
+Description=earlybird daemon
+After=network.target
+
+[Service]
+Restart=on-failure
+Environment=PYTHONOPTIMIZE=1
+
+WorkingDirectory=/etc/earlybird
+ExecStart=/usr/bin/earlybird config
+
+PrivateTmp=true
+DevicePolicy=closed
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/etc/bird.conf
+
+[Install]
+WantedBy=network.target
