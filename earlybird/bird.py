@@ -1,4 +1,5 @@
 import logging
+from jinja2 import Environment, FileSystemLoader
 
 from .iproute import get_peer_addr
 from .pingc import PingHost
@@ -6,9 +7,12 @@ from .pingc import PingHost
 
 class Bird:
     
-    def __init__(self, port, ifnames):
+    def __init__(self, port, ifnames, template_paths=['.']):
         self._ifname_addr = dict()
         self._ifname_stat = dict()
+        self._jinja = Environment(
+            loader=FileSystemLoader(template_paths),
+        )
         for ifname in ifnames:
             self.add_interface(ifname, port=port)
 
@@ -33,4 +37,10 @@ class Bird:
                     logging.warning("fail to test %s: %s", ifname, err)
                 
     def generate(self, template):
-        pass
+        template = self._jinja.get_template(template)
+        return template.render(stats=self._ifname_stat)
+
+    def generate_to(self, template, output):
+        text = self.generate(template)
+        with open(output, 'w') as f:
+            f.write(text)

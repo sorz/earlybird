@@ -11,3 +11,6 @@ PINGD_PORT = PINGD_LISTEN[1]
 INTERFACES = [
     'tun-rpi',
 ]
+TEMPLATE = 'bird.conf'
+TEMPLATE_SEARCH_PATHS = ['./']
+TEMPLATE_OUTPUT = './output.conf'
