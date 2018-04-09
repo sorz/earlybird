@@ -1,11 +1,11 @@
 pkgname=earlybird-git
 _pkgname=earlybird
-pkgver=r13.5bbb1ae
+pkgver=r18.5dffdcd
 pkgrel=1
 arch=('any')
 depends=('python' 'python-jinja' 'python-pyroute2')
 makedepends=('git' 'python')
-source=(git+file:///home/xierch/earlybird)
+source=(git+https://github.com/sorz/earlybird)
 sha256sums=('SKIP')
 
 pkgver() {

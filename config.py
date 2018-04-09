@@ -9,6 +9,8 @@ PINGD_LISTEN = ('0.0.0.0', 3322)
 TEST_INVERVAL = 600
 PINGD_PORT = PINGD_LISTEN[1]
 INTERFACES = [
+    # must be a peer-to-peer interface (e.g. OpenVPN)
+    # have to change the source if not in that case.
     'tun-rpi',
 ]
 TEMPLATE = 'bird.conf'
