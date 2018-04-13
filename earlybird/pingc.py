@@ -66,8 +66,11 @@ class PingHost:
             time.sleep(interval)
         time.sleep(interval)
         n_sent, ts = self.stat()
-        loss = (len(ts) - n_sent) / n_sent
-        return TestResult(loss, mean(ts), max(ts), min(ts), stdev(ts))
+        if ts:
+            loss = (len(ts) - n_sent) / n_sent
+            return TestResult(loss, mean(ts), max(ts), min(ts), stdev(ts))
+        else:
+            return 1, None, None, None, None
 
     def stat(self):
         """Request statistics from remote. Return (n, [t1, .., tm]),
